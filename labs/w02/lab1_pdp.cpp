@@ -38,7 +38,7 @@ typedef struct {
 
 //region globals {{{
 #define TRANSACTIONS_PER_THREAD 1
-#define RUN_TRANSACTIONS_THREADS 30
+#define RUN_TRANSACTIONS_THREADS 2
 #define CHECK_TRANSACTIONS_THREADS 20
 unordered_map<int, Account> _accounts;
 int id_base;
@@ -108,6 +108,7 @@ void read_last_account_worker() {
 
 void run_transactions_worker() {
     for(int i = 0; i < TRANSACTIONS_PER_THREAD; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         Transaction transaction;
         transaction.source_id = rand(id_base);
         // generate 2nd random id, POSSIBLY UNSAFE
@@ -137,11 +138,37 @@ void run_transactions_worker() {
         // push the transaction to the list of transactions
         // TODO: make the push thread-safe
         transactions.push_front(transaction);
+
+        // TODO !!! "and also appends the information about the transfer to the logs of both accounts"
     }
 }
 
 void check_transactions_worker() {
-    // TODO
+    std::unordered_map<int, int> accounts_balances;
+    for (const auto &transaction: transactions) {
+        if (accounts_balances.find(transaction.source_id) == accounts_balances.end()) {
+            accounts_balances[transaction.source_id] = 0;
+        }
+        accounts_balances[transaction.source_id] -= transaction.amount;
+
+        if (accounts_balances.find(transaction.destination_id) == accounts_balances.end()) {
+            accounts_balances[transaction.destination_id] = 0;
+        }
+        accounts_balances[transaction.destination_id] += transaction.amount;
+    }
+    
+    std::unordered_map<int, Account> initial_accounts = read_all_accounts("accounts.txt");
+
+    for (const auto &initialAccountPair: initial_accounts) {
+        const auto &initialAccount = initialAccountPair.second;
+
+        const auto account_id = initialAccount.id;
+        const auto expected_balance = initialAccount.balance + accounts_balances[account_id];
+        const auto actual_balance = _accounts[account_id].balance;
+        if (expected_balance != actual_balance) {
+            printf("Balance mismatch for account %d! Expected: %d, actual: %d\n", account_id, expected_balance, actual_balance);
+        }
+    }
 }
 
 int main(int argc, char** argv) {
