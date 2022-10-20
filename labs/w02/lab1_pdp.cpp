@@ -1,3 +1,4 @@
+//region include/using {{{
 #include <unordered_map>
 #include <string>
 #include <fstream>
@@ -14,11 +15,13 @@ using std::ifstream;
 using std::cout;
 using std::mutex;
 using std::list;
+//endregion }}}
 
+//region typedef {{{
 typedef struct {
     int id;
     int balance;
-} Account; 
+} Account;
 
 typedef struct {
     int id;
@@ -26,14 +29,19 @@ typedef struct {
     int destination_id;
     int amount;
 } Transaction;
+//endregion }}}
 // un thread care genreaza random o tranzactie
 // sau n tranzactii sau intr-un for loop
 
+//region globals {{{
+#define TRANSACTIONS_PER_THREAD 1
 unordered_map<int, Account> _accounts;
 int id_base;
 mutex accounts_mutex;
 list<Transaction> transactions;
+//endregion }}}
 
+//region accounts operations {{{
 unordered_map<int, Account> read_all_accounts(const string& filename) {
    ifstream file(filename);
    Account account;
@@ -52,7 +60,19 @@ void print_all_accounts(const unordered_map<int, Account>& accounts) {
         cout << current.id << " " << current.balance << "\n";
     }
 }
+//endregion }}}
 
+//region utils {{{
+int rand(int upperExclusiveBound) {
+    return rand() % upperExclusiveBound;
+}
+
+int rand(int lowerBoundInclusive, int upperExclusiveBound) {
+    return rand(upperExclusiveBound) + lowerBoundInclusive;
+}
+//endregion }}}
+
+//region account workers {{{
 void add_account_worker() {
     Account account;
     account.balance = rand();
@@ -73,9 +93,17 @@ void read_last_account_worker() {
 
     accounts_mutex.unlock();
 }
+//endregion }}}
 
-int main() {
-    srand(time(0));
+void run_transactions_worker() {
+    for(int i = 0; i < TRANSACTIONS_PER_THREAD; i++) {
+        
+    }
+}
+
+
+int main(int argc, char** argv) {
+    srand(time(nullptr));
     _accounts = read_all_accounts("accounts.txt");
     id_base = _accounts.size();
 
