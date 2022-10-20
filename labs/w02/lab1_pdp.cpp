@@ -33,13 +33,14 @@ typedef struct {
     int amount;
 } Transaction;
 //endregion }}}
-// un thread care genreaza random o tranzactie
-// sau n tranzactii sau intr-un for loop
 
-//region globals {{{
+//region defines {{{
 #define TRANSACTIONS_PER_THREAD 1
 #define RUN_TRANSACTIONS_THREADS 2
 #define CHECK_TRANSACTIONS_THREADS 20
+//endregion }}}
+
+//region globals {{{
 unordered_map<int, Account> _accounts;
 int id_base;
 int transaction_id_base;
@@ -50,9 +51,9 @@ list<Transaction> transactions;
 
 //region accounts operations {{{
 unordered_map<int, Account> read_all_accounts(const string& filename) {
-   ifstream file(filename);
-   Account account;
-   unordered_map<int, Account> accounts;
+    ifstream file(filename);
+    Account account;
+    unordered_map<int, Account> accounts;
 
     while(file >> account.id >> account.balance) {
         accounts[account.id] = account;
