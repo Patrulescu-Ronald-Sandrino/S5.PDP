@@ -36,8 +36,8 @@ typedef struct {
 
 //region defines {{{
 #define TRANSACTIONS_PER_THREAD 1
-#define RUN_TRANSACTIONS_THREADS 2
-#define CHECK_TRANSACTIONS_THREADS 20
+#define RUN_TRANSACTIONS_THREADS 1
+#define CHECK_TRANSACTIONS_THREADS 10
 //endregion }}}
 
 //region globals {{{
@@ -122,7 +122,7 @@ void run_transactions_worker() {
         transaction.id = transaction_id_base++;
         transaction_id_mutex.unlock();
 
-        auto& source_account = _accounts.at(transaction.source_id);
+        auto& source_account = _accounts[transaction.source_id];
         const auto& source_balance = source_account.balance;
         // skip accounts with a balance of 0
         if (source_balance == 0)
@@ -168,6 +168,9 @@ void check_transactions_worker() {
         const auto actual_balance = _accounts[account_id].balance;
         if (expected_balance != actual_balance) {
             printf("Balance mismatch for account %d! Expected: %d, actual: %d\n", account_id, expected_balance, actual_balance);
+        }
+        else {
+            printf("Account %d is ok\n", account_id);
         }
     }
 }
