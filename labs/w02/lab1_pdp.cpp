@@ -9,6 +9,7 @@
 #include <ctime>
 #include <list>
 #include <vector>
+#include <chrono>
 
 using std::unordered_map;
 using std::string;
@@ -36,8 +37,9 @@ typedef struct {
 // sau n tranzactii sau intr-un for loop
 
 //region globals {{{
-#define THREADS 30
 #define TRANSACTIONS_PER_THREAD 1
+#define RUN_TRANSACTIONS_THREADS 30
+#define CHECK_TRANSACTIONS_THREADS 20
 unordered_map<int, Account> _accounts;
 int id_base;
 int transaction_id_base;
@@ -142,7 +144,6 @@ void check_transactions_worker() {
     // TODO
 }
 
-
 int main(int argc, char** argv) {
     srand(time(nullptr));
     _accounts = read_all_accounts("accounts.txt");
@@ -157,12 +158,16 @@ int main(int argc, char** argv) {
     reader_thread.join();
 
 
-    // TODO: launch, from time to time, check transaction thread & join it
-
     vector<std::thread> run_transactions_threads;
+    vector<std::thread> check_transactions_threads;
 
-    for (int i = 0; i < THREADS; ++i) {
+    for (int i = 0; i < RUN_TRANSACTIONS_THREADS; ++i) {
         run_transactions_threads.emplace_back(run_transactions_worker);
+    }
+
+    for (int i = 0; i < CHECK_TRANSACTIONS_THREADS; ++i) {
+        check_transactions_threads.emplace_back(check_transactions_worker);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     for (auto &runTransactionsThread: run_transactions_threads) {
@@ -170,6 +175,13 @@ int main(int argc, char** argv) {
     }
 
     print_all_accounts(_accounts);
+
+    for (auto &checkTransactionsThread: check_transactions_threads) {
+        checkTransactionsThread.join();
+    }
+
+    std::thread check_transactions_thread(check_transactions_worker);
+    check_transactions_thread.join();
 
     return 0;
 }
