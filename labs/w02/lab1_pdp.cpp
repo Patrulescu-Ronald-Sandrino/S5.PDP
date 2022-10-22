@@ -21,10 +21,17 @@ using std::vector;
 //endregion }}}
 
 //region typedef {{{
-typedef struct {
-    int id;
-    int balance;
-} Account;
+struct Account {
+    int id{};
+    int balance{};
+    mutex mtx;
+
+    Account& operator=(const struct Account& other) {
+        id = other.id;
+        balance = other.balance;
+        return *this;
+    }
+};
 
 typedef struct {
     int id;
@@ -35,9 +42,9 @@ typedef struct {
 //endregion }}}
 
 //region defines {{{
-#define TRANSACTIONS_PER_THREAD 1
-#define RUN_TRANSACTIONS_THREADS 1
-#define CHECK_TRANSACTIONS_THREADS 10
+#define TRANSACTIONS_PER_THREAD 5
+#define RUN_TRANSACTIONS_THREADS 20
+#define CHECK_TRANSACTIONS_THREADS 5
 //endregion }}}
 
 //region globals {{{
@@ -46,6 +53,7 @@ int id_base;
 int transaction_id_base;
 mutex accounts_mutex;
 mutex transaction_id_mutex;
+mutex transactions_mutex;
 list<Transaction> transactions;
 //endregion }}}
 
@@ -64,7 +72,7 @@ unordered_map<int, Account> read_all_accounts(const string& filename) {
 
 void print_all_accounts(const unordered_map<int, Account>& accounts) {
     for(auto const& account: accounts) {
-        auto current = account.second;
+        const auto& current = account.second;
         cout << current.id << " " << current.balance << "\n";
     }
 }
@@ -100,7 +108,7 @@ void add_account_worker() {
 void read_last_account_worker() {
     accounts_mutex.lock();
 
-    auto account = _accounts[id_base - 1];
+    const auto &account = _accounts[id_base - 1];
     cout << account.id << " " << account.balance << "\n";
 
     accounts_mutex.unlock();
@@ -109,7 +117,8 @@ void read_last_account_worker() {
 
 void run_transactions_worker() {
     for(int i = 0; i < TRANSACTIONS_PER_THREAD; i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(600));
+
         Transaction transaction;
         transaction.source_id = rand(id_base);
         // generate 2nd random id, POSSIBLY UNSAFE
@@ -123,6 +132,15 @@ void run_transactions_worker() {
         transaction_id_mutex.unlock();
 
         auto& source_account = _accounts[transaction.source_id];
+        auto &destination_account = _accounts[transaction.destination_id];
+        auto getFirstAccount = [&]() {
+            return source_account.id < destination_account.id ? &source_account : &destination_account;
+        };
+        auto getSecondAccount = [&]() {
+            return source_account.id < destination_account.id ? &destination_account : &source_account;
+        };
+        getFirstAccount()->mtx.lock();
+        getSecondAccount()->mtx.lock();
         const auto& source_balance = source_account.balance;
         // skip accounts with a balance of 0
         if (source_balance == 0)
@@ -134,18 +152,27 @@ void run_transactions_worker() {
         // subtract the amount from the source account
         // TODO: make the subtraction thread-safe
         source_account.balance -= transaction.amount;
+        destination_account.balance += transaction.amount;
         printf("Transaction %d from %d to %d: %d\n", transaction.id, transaction.source_id, transaction.destination_id, transaction.amount);
 
         // push the transaction to the list of transactions
         // TODO: make the push thread-safe
+        transactions_mutex.lock();
         transactions.push_front(transaction);
+        transactions_mutex.unlock();
+
+        getSecondAccount()->mtx.unlock();
+        getFirstAccount()->mtx.unlock();
+
 
         // TODO !!! "and also appends the information about the transfer to the logs of both accounts"
     }
 }
 
 void check_transactions_worker() {
+    cout << "Check start\n";
     std::unordered_map<int, int> accounts_balances;
+    transactions_mutex.lock();
     for (const auto &transaction: transactions) {
         if (accounts_balances.find(transaction.source_id) == accounts_balances.end()) {
             accounts_balances[transaction.source_id] = 0;
@@ -157,14 +184,16 @@ void check_transactions_worker() {
         }
         accounts_balances[transaction.destination_id] += transaction.amount;
     }
+    transactions_mutex.unlock();
     
     std::unordered_map<int, Account> initial_accounts = read_all_accounts("accounts.txt");
 
-    for (const auto &initialAccountPair: initial_accounts) {
-        const auto &initialAccount = initialAccountPair.second;
-
+    for (auto &initialAccountPair: initial_accounts) {
+        auto &initialAccount = initialAccountPair.second;
         const auto account_id = initialAccount.id;
+        initialAccount.mtx.lock();
         const auto expected_balance = initialAccount.balance + accounts_balances[account_id];
+        initialAccount.mtx.unlock();
         const auto actual_balance = _accounts[account_id].balance;
         if (expected_balance != actual_balance) {
             printf("Balance mismatch for account %d! Expected: %d, actual: %d\n", account_id, expected_balance, actual_balance);
@@ -173,6 +202,7 @@ void check_transactions_worker() {
             printf("Account %d is ok\n", account_id);
         }
     }
+    cout << "Check end\n";
 }
 
 int main(int argc, char** argv) {
@@ -198,7 +228,7 @@ int main(int argc, char** argv) {
 
     for (int i = 0; i < CHECK_TRANSACTIONS_THREADS; ++i) {
         check_transactions_threads.emplace_back(check_transactions_worker);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 
     for (auto &runTransactionsThread: run_transactions_threads) {
