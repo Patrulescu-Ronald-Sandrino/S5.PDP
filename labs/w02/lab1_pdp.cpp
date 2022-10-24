@@ -42,7 +42,7 @@ typedef struct {
 //endregion }}}
 
 //region defines {{{
-#define TRANSACTIONS_PER_THREAD 5
+#define TRANSACTIONS_PER_THREAD 1
 #define RUN_TRANSACTIONS_THREADS 20
 #define CHECK_TRANSACTIONS_THREADS 5
 //endregion }}}
@@ -171,7 +171,7 @@ void run_transactions_worker() {
     }
 }
 
-void check_transactions_worker() {
+void checkTransactionsWorker() {
     cout << "Check start\n";
     std::unordered_map<int, int> accounts_balances;
     transactions_mutex.lock();

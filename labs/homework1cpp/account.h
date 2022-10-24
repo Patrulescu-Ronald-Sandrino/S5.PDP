@@ -13,14 +13,17 @@
 using namespace std;
 
 struct Account {
+    static const int MAX_INITIAL_BALANCE = 1000;
+
     int id{};
+    int initialBalance{};
     int balance{};
     mutex mtx{};
 
-    static unordered_map<int, Account*> generateAccounts() {
+    static unordered_map<int, Account*> generateAccounts(int number) {
         unordered_map<int, Account*> accounts;
 
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < number; ++i) {
             accounts[i] = generateAccount(i);
         }
 
@@ -30,7 +33,7 @@ struct Account {
     static Account *generateAccount(int i) {
         auto* account = new Account;
         account->id = i;
-        account->balance = rand() % 1001;
+        account->balance = account->initialBalance = rand() % (MAX_INITIAL_BALANCE + 1);
         return account;
     }
 

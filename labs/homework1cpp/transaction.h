@@ -7,11 +7,13 @@
 
 struct Transaction {
     static int ID;
+    const int id = ID++;
 
-    int id = ID++;
     int fromId;
     int toId;
     int amount;
+
+    Transaction(int fromId, int toId, int amount) : fromId(fromId), toId(toId), amount(amount) {}
 };
 
 int Transaction::ID = 0;
