@@ -4,13 +4,13 @@
 
 using namespace std;
 
-#define RUN_TRANSACTION_WORKERS 10
-#define CHECK_TRANSACTIONS_WORKERS 10
+#define RUN_TRANSACTION_WORKERS 20
+#define CHECK_TRANSACTIONS_WORKERS 5
 
 Bank bank;
 
 void runTransactionWorker() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(600));
 
     pair<int, int> accountIds = Bank::getRandomAccountIds();
     int amount = rand(Account::MAX_INITIAL_BALANCE + 1);
@@ -50,6 +50,8 @@ int main() {
 //    srand(time(nullptr));
     srand(200);
 
+    bank.printAccounts();
+
     vector<thread> runTransactionThreads;
     vector<thread> checkTransactionsThreads;
 
@@ -58,8 +60,8 @@ int main() {
     }
 
     for (int i = 0; i < CHECK_TRANSACTIONS_WORKERS; ++i) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         checkTransactionsThreads.emplace_back(&checkTransactionsWorker);
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 
     for (auto &runTransactionThread: runTransactionThreads) {
@@ -73,6 +75,8 @@ int main() {
     // launch final check of transactions
     thread checkTransactionsThread(&checkTransactionsWorker);
     checkTransactionsThread.join();
+
+    bank.printAccounts();
 
     return 0;
 }

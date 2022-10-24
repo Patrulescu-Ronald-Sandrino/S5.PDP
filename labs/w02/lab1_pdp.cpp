@@ -171,7 +171,7 @@ void run_transactions_worker() {
     }
 }
 
-void checkTransactionsWorker() {
+void check_transactions_worker() {
     cout << "Check start\n";
     std::unordered_map<int, int> accounts_balances;
     transactions_mutex.lock();
