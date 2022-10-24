@@ -5,10 +5,13 @@
 using namespace std;
 
 #define RUN_TRANSACTION_WORKERS 10
+#define CHECK_TRANSACTIONS_WORKERS 10
 
 Bank bank;
 
 void runTransactionWorker() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
     pair<int, int> accountIds = Bank::getRandomAccountIds();
     int amount = rand(Account::MAX_INITIAL_BALANCE + 1);
 
@@ -48,18 +51,24 @@ int main() {
     srand(200);
 
     vector<thread> runTransactionThreads;
+    vector<thread> checkTransactionsThreads;
 
     for (int i = 0; i < RUN_TRANSACTION_WORKERS; ++i) {
         runTransactionThreads.emplace_back(&runTransactionWorker);
     }
 
-    // TODO: launch timed check_transactions_workerS
+    for (int i = 0; i < CHECK_TRANSACTIONS_WORKERS; ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        checkTransactionsThreads.emplace_back(&checkTransactionsWorker);
+    }
 
     for (auto &runTransactionThread: runTransactionThreads) {
         runTransactionThread.join();
     }
 
-    // TODO: after all runTransactionThreads finished, join the checkTransactionsThreads
+    for (auto &checkTransactionsThread: checkTransactionsThreads) {
+        checkTransactionsThread.join();
+    }
 
     // launch final check of transactions
     thread checkTransactionsThread(&checkTransactionsWorker);
