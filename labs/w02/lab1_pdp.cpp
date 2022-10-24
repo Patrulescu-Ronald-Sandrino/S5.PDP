@@ -120,11 +120,13 @@ void run_transactions_worker() {
         std::this_thread::sleep_for(std::chrono::milliseconds(600));
 
         Transaction transaction;
+        accounts_mutex.lock();
         transaction.source_id = rand(id_base);
         // generate 2nd random id, POSSIBLY UNSAFE
         transaction.destination_id = randBool() && transaction.source_id != 0 ?
                 rand(transaction.source_id) :
                 rand(transaction.source_id + 1, id_base);
+        accounts_mutex.unlock();
 
         // can be made into a function OR atomic integer
         transaction_id_mutex.lock();
