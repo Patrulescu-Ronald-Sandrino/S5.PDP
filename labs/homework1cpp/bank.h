@@ -6,6 +6,7 @@
 #define HOMEWORK1CPP_BANK_H
 
 #include <iostream>
+#include <shared_mutex>
 #include "account.h"
 #include "transactions.h"
 #include "util.h"
@@ -17,6 +18,7 @@ struct Bank {
 
     unordered_map<int, Account*> accounts;
     Transactions transactions;
+    shared_mutex accountsMutex;
 
     Bank() {
         accounts = Account::generateAccounts(ACCOUNTS);
@@ -60,22 +62,37 @@ const int Bank::ACCOUNTS = 10;
  * @pre
  * fromId \< toId*/
 bool Bank::transfer(int fromId, int toId, int amount) {
+    shared_lock readLock(accountsMutex);
+
     auto& fromAccount = *accounts[fromId];
     auto& toAccount = *accounts[toId];
 
+//    transactions.mtx.lock();
+    unique_lock<mutex> lock(transactions.mtx);
     fromAccount.mtx.lock();
+    toAccount.mtx.lock();
+
     if (fromAccount.balance < amount) {
         fromAccount.mtx.unlock();
+        toAccount.mtx.unlock();
         return false;
     }
 
     fromAccount.balance -= amount;
 
-    unique_lock<mutex> toLock(toAccount.mtx);
-    transactions.add(Transaction(fromId, toId, amount));
-    fromAccount.mtx.unlock();
+//    unique_lock<mutex> toLock(toAccount.mtx);
+
+//    transactions.add(Transaction(fromId, toId, amount));
+    transactions.transactions.emplace_back(fromId, toId, amount);
+
+    printf("transferring from %d to %d: %d\n", fromId, toId, amount);
+
 
     toAccount.balance += amount;
+    toAccount.mtx.unlock();
+    fromAccount.mtx.unlock();
+
+//    transactions.mtx.unlock();
 
     return true;
 }
