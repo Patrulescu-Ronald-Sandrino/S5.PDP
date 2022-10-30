@@ -44,35 +44,51 @@ void printVector(const vector<int> &v) {
 
 void producerWorker() {
     int i = 0;
-    auto updateFinished = [&i](){ finished = i >= min(v1.size(), v2.size()); };
+    bool looping = true;
 
-    updateFinished();
-    while (!finished) {
+    while (looping) {
+        std::this_thread::sleep_for(0.01s);
         unique_lock<mutex> lock(mtx);
 
-        result = v1[i] * v2[i];
+        result = i < min(v1.size(), v2.size()) ? v1[i] * v2[i] : -1;
+        looping = result == -1;
         ready = true;
 
+//        if (result == -1) {
+//            lock.unlock();
+//            cv.notify_one();
+//            break;
+//        }
+
         i++;
-        updateFinished();
 
         lock.unlock();
         cv.notify_one();
+
+        lock.lock();
+        cv.wait(lock, [](){ return !ready; });
     }
 }
 
 void consumerWorker() {
     int sum = 0;
 
-    unique_lock<mutex> lock(mtx);
     while (!finished) {
-        while (!ready) {
-            cv.wait(lock);
+        unique_lock<mutex> lock(mtx);
+        cv.wait(lock, [](){ return ready; });
+
+        if (result == -1) {
+            lock.unlock();
+            cv.notify_one();
+            break;
         }
+
         sum += result;
         printf("Consuming %d, sum is now %d\n", result, sum);
+        ready = false;
+        lock.unlock();
+        cv.notify_one();
     }
-//    lock.unlock(); // TODO: maybe this isn't necessary OR it may lead to problems
     printf("Final sum is %d\n", sum);
 }
 
@@ -86,11 +102,13 @@ int main() {
     printVector(v1);
     printVector(v2);
 
-    thread consumerThread(&consumerWorker);
-    thread producerThread(&producerWorker);
+    vector<thread> threads;
+    threads.emplace_back(&consumerWorker);
+    threads.emplace_back(&producerWorker);
 
-    consumerThread.join();
-    producerThread.join();
+    for (auto &item: threads) {
+        item.join();
+    }
 
     return 0;
 }
