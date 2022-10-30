@@ -47,23 +47,19 @@ void producerWorker() {
     bool looping = true;
 
     while (looping) {
-        std::this_thread::sleep_for(0.01s);
         unique_lock<mutex> lock(mtx);
 
         result = i < min(v1.size(), v2.size()) ? v1[i] * v2[i] : -1;
-        looping = result == -1;
-        ready = true;
-
-//        if (result == -1) {
-//            lock.unlock();
-//            cv.notify_one();
-//            break;
-//        }
-
         i++;
+        looping = result != -1;
+        ready = true;
 
         lock.unlock();
         cv.notify_one();
+
+        if (result == -1) {
+            break;
+        }
 
         lock.lock();
         cv.wait(lock, [](){ return !ready; });
@@ -86,6 +82,7 @@ void consumerWorker() {
         sum += result;
         printf("Consuming %d, sum is now %d\n", result, sum);
         ready = false;
+
         lock.unlock();
         cv.notify_one();
     }
