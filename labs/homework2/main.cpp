@@ -44,18 +44,19 @@ void printVector(const vector<int> &v) {
 
 void producerWorker() {
     int i = 0;
-    unique_lock<mutex> lock(mtx);
     auto updateFinished = [&i](){ finished = i >= min(v1.size(), v2.size()); };
 
     updateFinished();
     while (!finished) {
+        unique_lock<mutex> lock(mtx);
+
         result = v1[i] * v2[i];
         ready = true;
 
         i++;
         updateFinished();
 
-//        lock.unlock();
+        lock.unlock();
         cv.notify_one();
     }
 }
