@@ -52,8 +52,8 @@ void checkTransactionsWorker() {
 
 
 int main() {
-//    srand(time(nullptr));
-    srand(200);
+    srand(time(0));
+//    srand(200);
 
     bank.printAccounts();
 
