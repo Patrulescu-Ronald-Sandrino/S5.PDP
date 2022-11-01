@@ -44,14 +44,12 @@ void printVector(const vector<int> &v) {
 
 void producerWorker() {
     int i = 0;
-    bool looping = true;
 
-    while (looping) {
+    while (true) {
         unique_lock<mutex> lock(mtx);
 
         result = i < min(v1.size(), v2.size()) ? v1[i] * v2[i] : -1;
         i++;
-        looping = result != -1;
         ready = true;
 
         lock.unlock();
