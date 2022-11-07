@@ -18,10 +18,11 @@ private:
 public:
     //region basics
     explicit Matrix(size_t mSize) : m_size(mSize), m_data(new int*[m_size]) {
+        auto random = Random(100);
         for (int i = 0; i < m_size; ++i) {
             m_data[i] = new int[m_size];
             for (int j = 0; j < m_size; ++j) {
-                m_data[i][j] = (int)Random(100)();
+                m_data[i][j] = (int) random();
             }
         }
     }
