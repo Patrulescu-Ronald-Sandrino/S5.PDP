@@ -6,23 +6,22 @@
 #define HOMEWORK3_MATRIX_H
 
 #include <stdexcept>
+#include <ostream>
+#include "util/Random.h"
 
 using namespace std;
 
 struct Matrix {
 private:
-    int m_size;
+    size_t m_size;
     int** m_data;
 public:
     //region basics
-    explicit Matrix(int mSize) : m_size(mSize), m_data(new int*[m_size]) {
-        if (m_size < 1)
-            throw runtime_error("Size must be > 0.");
-
+    explicit Matrix(size_t mSize) : m_size(mSize), m_data(new int*[m_size]) {
         for (int i = 0; i < m_size; ++i) {
             m_data[i] = new int[m_size];
             for (int j = 0; j < m_size; ++j) {
-                m_data[i][j] = 0; // TODO: set random value
+                m_data[i][j] = (int)Random(100)();
             }
         }
     }
@@ -60,6 +59,21 @@ public:
             delete[] m_data[i];
         }
         delete[] m_data;
+    }
+
+    friend ostream &operator<<(ostream &os, const Matrix &matrix) {
+        os << "Matrix{" << endl;
+        os << "size=" << matrix.m_size << "," << endl;
+        os << "data=" << endl;
+        for (int i = 0; i < matrix.m_size; ++i) {
+            for (int j = 0; j < matrix.m_size; ++j) {
+                os << matrix.m_data[i][j] << " ";
+            }
+            os << endl;
+        }
+        os << "}" << endl;
+
+        return os;
     }
     //endregion
 };

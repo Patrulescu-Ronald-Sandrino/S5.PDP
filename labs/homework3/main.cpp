@@ -1,6 +1,11 @@
 #include <iostream>
+#include "Matrix.h"
+
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Matrix m = Matrix(2);
+
+    cout << m;
+
     return 0;
 }
