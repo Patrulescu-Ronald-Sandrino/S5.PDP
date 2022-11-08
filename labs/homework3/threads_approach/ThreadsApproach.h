@@ -25,11 +25,9 @@ public:
                                                                                                                 matrixSize) {}
 
     Matrix run() {
-
         for (int threadIdx = 0; threadIdx < numberOfThreads; ++threadIdx) {
-            // create and run m_threads
             auto task = generationStrategy.createTask(threadIdx, numberOfThreads, factorMatrix1, factorMatrix2, resultMatrix);
-            add(threadIdx, task);// TODO: task =
+            add(threadIdx, task);
         }
 
         threadsCleanup();
