@@ -6,8 +6,9 @@
 #define HOMEWORK3_THREADSAPPROACH_H
 
 
+#include <functional>
 #include "../domain/Matrix.h"
-#include "../matrix_task/MatrixTask.h"
+#include "../generation_strategy/GenerationStrategy.h"
 
 class ThreadsApproach {
 protected:
@@ -16,24 +17,27 @@ protected:
     Matrix resultMatrix;
 
     int numberOfThreads;
-    const MatrixTask& generationStrategy;
+    const GenerationStrategy& generationStrategy;
 public:
-    ThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask &generationStrategy) : numberOfThreads(
+    ThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy &generationStrategy) : numberOfThreads(
             numberOfThreads), generationStrategy(generationStrategy), factorMatrix1(matrixSize), factorMatrix2(matrixSize),
-                                                                                                    resultMatrix(
+                                                                                                            resultMatrix(
                                                                                                                 matrixSize) {}
 
     Matrix run() {
 
         for (int threadIdx = 0; threadIdx < numberOfThreads; ++threadIdx) {
             // create and run m_threads
-            // add(threadIdx);
+            auto task = generationStrategy.createTask(threadIdx, numberOfThreads, factorMatrix1, factorMatrix2, resultMatrix);
+            add(threadIdx, task);// TODO: task =
         }
 
         threadsCleanup();
 
         return {resultMatrix};
     }
+    
+    virtual void add(int threadIdx, function<void()> task) = 0;
 
     virtual void threadsCleanup() = 0;
 
@@ -44,7 +48,7 @@ public:
 class ThreadsApproachFactory {
 public:
     virtual ~ThreadsApproachFactory() = default;
-    virtual unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy) = 0;
+    virtual unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy) = 0;
 };
 
 

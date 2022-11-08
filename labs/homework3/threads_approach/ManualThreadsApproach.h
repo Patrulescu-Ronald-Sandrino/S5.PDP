@@ -8,16 +8,20 @@
 
 #include <thread>
 #include "ThreadsApproach.h"
-#include "../matrix_task/MatrixTask.h"
+#include "../generation_strategy/GenerationStrategy.h"
 
 class ManualThreadsApproach : public ThreadsApproach {
 private:
     vector<thread> threads;
 
 public:
-    ManualThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy)
+    ManualThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy)
             : ThreadsApproach(matrixSize, numberOfThreads, generationStrategy) {
         threads.reserve(numberOfThreads);
+    }
+
+    void add(int threadIdx, function<void()> task) override {
+        threads.emplace_back(task);
     }
 
     void threadsCleanup() override {
@@ -29,7 +33,7 @@ public:
 
 class ManualThreadsApproachFactory : public ThreadsApproachFactory {
 public:
-    unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy) override {
+    unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy) override {
         return make_unique<ManualThreadsApproach>(matrixSize, numberOfThreads, generationStrategy);
     }
 };

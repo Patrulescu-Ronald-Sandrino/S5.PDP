@@ -3,4 +3,4 @@ project(homework3)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(homework3 main.cpp domain/Matrix.h util/Random.h threads_approach/ThreadsApproach.h matrix_task/MatrixTask.h threads_approach/ManualThreadsApproach.h util/ThreadPool.h)
+add_executable(homework3 main.cpp domain/Matrix.h util/Random.h threads_approach/ThreadsApproach.h generation_strategy/GenerationStrategy.h threads_approach/ManualThreadsApproach.h util/ThreadPool.h matrix_task/MatrixTask.h generation_strategy/GenerationStrategy.h)
