@@ -23,7 +23,7 @@ public:
             count += matrixArea % numberOfThreads;
         }
 
-        return [&](){
+        return [&factorMatrix1, &factorMatrix2, &resultMatrix, startRow, startColumn, count](){
             RowTask(factorMatrix1, factorMatrix2, resultMatrix, startRow, startColumn, count).run();
         };
     }

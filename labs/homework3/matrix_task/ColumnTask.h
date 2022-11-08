@@ -23,7 +23,23 @@ public:
     }
 
     vector<pair<int, int>> computePositions() override {
+        vector<pair<int, int>> positions;
+        positions.reserve(count);
+        auto row = startRow;
+        auto column = startColumn;
+        auto positionsLeftToAdd = count;
 
+        while (positionsLeftToAdd > 0 && row < factorMatrix1.size() && column < factorMatrix2.size()) {
+            positions.emplace_back(row, column);
+            positionsLeftToAdd--;
+            row++;
+            if (row == factorMatrix1.size()) {
+                row = 0;
+                column++;
+            }
+        }
+
+        return positions;
     }
 };
 
