@@ -12,7 +12,7 @@ using namespace std;
 
 class GenerationStrategy {
 public:
-    virtual function<void()> createTask(int threadIdx, int numberOfThreads, Matrix factorMatrix1, Matrix factorMatrix2, Matrix result) const = 0;
+    virtual function<void()> createTask(int threadIdx, int numberOfThreads, Matrix factorMatrix1, Matrix factorMatrix2, Matrix resultMatrix) const = 0;
 
     virtual ~GenerationStrategy() = default;
 };

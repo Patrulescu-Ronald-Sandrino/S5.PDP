@@ -76,6 +76,44 @@ public:
 
         return os;
     }
+
+    size_t size() const {
+        return m_size;
+    }
+
+    size_t area() const {
+        return m_size * m_size;
+    }
+
+    void set(size_t row, size_t column, int value) {
+        auto inRange = [](size_t x, size_t min, size_t max) {
+            return x >= min && x <= max;
+        };
+
+        if (!inRange(row, 0, m_size - 1) || !inRange(column, 0, m_size - 1))
+            throw runtime_error("Index out of range.");
+
+        m_data[row][column] = value;
+    }
+
+    int computeProductAt(int row, int column, const Matrix& other) {
+        if (m_size != other.m_size)
+            throw runtime_error("Size must be equal.");
+
+        auto inRange = [](size_t x, size_t min, size_t max) {
+            return x >= min && x <= max;
+        };
+
+        if (!inRange(row, 0, m_size - 1) || !inRange(column, 0, m_size - 1))
+            throw runtime_error("Index out of range.");
+
+        auto result = 0;
+        for (int i = 0; i < m_size; ++i) {
+            result += m_data[row][i] * other.m_data[i][column];
+        }
+
+        return result;
+    }
     //endregion
 };
 

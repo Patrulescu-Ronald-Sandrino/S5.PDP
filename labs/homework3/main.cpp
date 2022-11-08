@@ -4,6 +4,8 @@
 #include "generation_strategy/GenerationStrategy.h"
 #include "threads_approach/ManualThreadsApproach.h"
 #include "generation_strategy/RowStrategy.h"
+#include "generation_strategy/ColumnStrategy.h"
+#include "generation_strategy/KthStrategy.h"
 
 
 int main() {
