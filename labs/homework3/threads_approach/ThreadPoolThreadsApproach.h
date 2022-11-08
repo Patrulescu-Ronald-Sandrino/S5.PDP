@@ -11,15 +11,16 @@
 
 class ThreadPoolThreadsApproach : public ThreadsApproach {
 public:
-    ThreadPoolThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy)
+    ThreadPoolThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy)
             : ThreadsApproach(matrixSize, numberOfThreads, generationStrategy) {}
 
-
+    void threadsCleanup() override {
+    }
 };
 
 class ThreadPoolThreadsApproachFactory : public ThreadsApproachFactory {
 public:
-    unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy) override {
+    unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy) override {
         return make_unique<ThreadPoolThreadsApproach>(matrixSize, numberOfThreads, generationStrategy);
     }
 };

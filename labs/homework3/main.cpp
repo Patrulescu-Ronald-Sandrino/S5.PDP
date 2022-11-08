@@ -1,9 +1,8 @@
 #include <iostream>
 #include <chrono>
-#include <memory>
 #include "domain/Matrix.h"
-#include "generation_strategy/GenerationStrategy.h"
-#include "generation_strategy/RowGenerationStrategy.h"
+#include "matrix_task/MatrixTask.h"
+#include "matrix_task/RowTask.h"
 #include "threads_approach/ManualThreadsApproach.h"
 
 
@@ -11,7 +10,7 @@ int main() {
     // --------------------- play with these values ---------------------
     size_t matrixSize = 9;
     int numberOfThreads = 3;
-    GenerationStrategy generationStrategy = RowGenerationStrategy();
+    MatrixTask generationStrategy = RowTask();
     auto threadsApproachFactory = ManualThreadsApproachFactory();
     // ------------------------------------------------------------------
 

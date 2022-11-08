@@ -7,25 +7,35 @@
 
 
 #include "../domain/Matrix.h"
-#include "../generation_strategy/GenerationStrategy.h"
+#include "../matrix_task/MatrixTask.h"
 
 class ThreadsApproach {
-private:
+protected:
     Matrix factorMatrix1;
     Matrix factorMatrix2;
     Matrix resultMatrix;
 
     int numberOfThreads;
-    const GenerationStrategy& generationStrategy;
+    const MatrixTask& generationStrategy;
 public:
-    ThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy &generationStrategy) : numberOfThreads(
+    ThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask &generationStrategy) : numberOfThreads(
             numberOfThreads), generationStrategy(generationStrategy), factorMatrix1(matrixSize), factorMatrix2(matrixSize),
-                                                                                                        resultMatrix(
+                                                                                                    resultMatrix(
                                                                                                                 matrixSize) {}
 
     Matrix run() {
+
+        for (int threadIdx = 0; threadIdx < numberOfThreads; ++threadIdx) {
+            // create and run m_threads
+            // add(threadIdx);
+        }
+
+        threadsCleanup();
+
         return {resultMatrix};
     }
+
+    virtual void threadsCleanup() = 0;
 
     virtual ~ThreadsApproach() = default;
 };
@@ -34,7 +44,7 @@ public:
 class ThreadsApproachFactory {
 public:
     virtual ~ThreadsApproachFactory() = default;
-    virtual unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy) = 0;
+    virtual unique_ptr<ThreadsApproach> createThreadsApproach(size_t matrixSize, int numberOfThreads, const MatrixTask& generationStrategy) = 0;
 };
 
 
