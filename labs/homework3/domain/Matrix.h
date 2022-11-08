@@ -7,7 +7,7 @@
 
 #include <stdexcept>
 #include <ostream>
-#include "util/Random.h"
+#include "../util/Random.h"
 
 using namespace std;
 
