@@ -11,8 +11,7 @@
 
 class KthStrategy : public GenerationStrategy {
 public:
-    function<void()> createTask(int threadIdx, int numberOfThreads, Matrix factorMatrix1, Matrix factorMatrix2,
-                                Matrix resultMatrix) const override {
+    function<void()> createTask(int threadIdx, int numberOfThreads, const Matrix& factorMatrix1, const Matrix& factorMatrix2, Matrix& resultMatrix) const override {
         const size_t matrixArea = resultMatrix.area();
         size_t count = matrixArea / numberOfThreads;
 

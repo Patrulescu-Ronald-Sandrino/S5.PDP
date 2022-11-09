@@ -10,11 +10,11 @@
 
 class MatrixTask {
 protected:;
-    Matrix& factorMatrix1;
-    Matrix& factorMatrix2;
+    const Matrix& factorMatrix1;
+    const Matrix& factorMatrix2;
     Matrix& resultMatrix;
 public:
-    MatrixTask(Matrix &factorMatrix1, Matrix &factorMatrix2, Matrix &resultMatrix) : factorMatrix1(factorMatrix1),
+    MatrixTask(const Matrix &factorMatrix1, const Matrix &factorMatrix2, Matrix &resultMatrix) : factorMatrix1(factorMatrix1),
                                                                                      factorMatrix2(factorMatrix2),
                                                                                      resultMatrix(resultMatrix) {
 

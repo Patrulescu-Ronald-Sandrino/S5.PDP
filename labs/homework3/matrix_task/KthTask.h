@@ -17,7 +17,7 @@ private:
     size_t count;
     int k;
 public:
-    KthTask(Matrix &factorMatrix1, Matrix &factorMatrix2, Matrix &resultMatrix, size_t startRow, size_t startColumn,
+    KthTask(const Matrix &factorMatrix1, const Matrix &factorMatrix2, Matrix &resultMatrix, size_t startRow, size_t startColumn,
             size_t count, int k) : MatrixTask(factorMatrix1, factorMatrix2, resultMatrix), startRow(startRow),
                                    startColumn(startColumn), count(count), k(k) {
 
@@ -42,4 +42,4 @@ public:
 };
 
 
-#endif HOMEWORK3_KTHTASK_H
+#endif //HOMEWORK3_KTHTASK_H

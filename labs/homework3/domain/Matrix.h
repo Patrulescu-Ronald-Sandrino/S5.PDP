@@ -39,21 +39,7 @@ public:
         }
     }
 
-    Matrix& operator=(const Matrix& other) {
-        if (this == &other)
-            return *this;
-
-        if (m_size != other.m_size)
-            throw runtime_error("Size must be equal.");
-
-        for (int i = 0; i < m_size; ++i) {
-            for (int j = 0; j < m_size; ++j) {
-                m_data[i][j] = other.m_data[i][j];
-            }
-        }
-
-        return *this;
-    }
+    Matrix& operator=(const Matrix& other) = delete;
 
     ~Matrix() {
         for (int i = 0; i < m_size; ++i) {
@@ -96,7 +82,7 @@ public:
         m_data[row][column] = value;
     }
 
-    int computeProductAt(int row, int column, const Matrix& other) {
+    int computeProductAt(int row, int column, const Matrix& other) const {
         if (m_size != other.m_size)
             throw runtime_error("Size must be equal.");
 

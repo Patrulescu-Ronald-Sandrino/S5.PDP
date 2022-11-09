@@ -14,7 +14,7 @@ private:
     size_t startColumn;
     size_t count;
 public:
-    RowTask(Matrix &factorMatrix1, Matrix &factorMatrix2, Matrix &resultMatrix, size_t startRow, size_t startColumn,
+    RowTask(const Matrix &factorMatrix1, const Matrix &factorMatrix2, Matrix &resultMatrix, size_t startRow, size_t startColumn,
             size_t count) : MatrixTask(factorMatrix1, factorMatrix2, resultMatrix), startRow(startRow),
                             startColumn(startColumn), count(count) {
 
