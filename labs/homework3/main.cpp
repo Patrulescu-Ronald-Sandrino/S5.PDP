@@ -8,25 +8,36 @@
 #include "generation_strategy/KthStrategy.h"
 
 
+pair<long, Matrix> runThreadsApproach(ThreadsApproachFactory& threadsApproachFactory, size_t matrixSize, int numberOfThreads, const GenerationStrategy& generationStrategy) {
+    auto threadsApproach = threadsApproachFactory.createThreadsApproach(matrixSize, numberOfThreads, generationStrategy);
+
+    auto start = chrono::high_resolution_clock::now();
+    auto result = threadsApproach->run();
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start).count();
+
+    return make_pair(duration, result);
+}
+
+
 int main() {
     // --------------------- play with these values ---------------------
+    size_t iterations = 1000;
     size_t matrixSize = 20;
     int numberOfThreads = 20;
     GenerationStrategy* generationStrategy = new RowStrategy();
     auto threadsApproachFactory = ThreadPoolThreadsApproachFactory();
-    // 9 3 row manual => ~250μs
-    // 9 3 row threadpool => ~250μs
-    // 15 10 row manual => μs
-    // 15 10 row threadpool => μs
+    // 1000 iterations
+    // 20x20 matrix, 20 threads, row strategy, thread pool - ~65 μs
     // ------------------------------------------------------------------
+    long sum = 0;
 
-    auto start = std::chrono::high_resolution_clock::now();
-    auto result = threadsApproachFactory.createThreadsApproach(matrixSize, numberOfThreads, *generationStrategy)->run();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    for (int i = 0; i < iterations; ++i) {
+        auto [duration, resultMatrix] = runThreadsApproach(threadsApproachFactory, matrixSize, numberOfThreads, *generationStrategy);
+        sum += duration;
+    }
 
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-//    cout << result;
+    cout << "Time taken by function: " << sum / iterations << " μs" << endl;
 
     delete generationStrategy;
 
