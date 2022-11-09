@@ -22,7 +22,7 @@ public:
             count++;
         }
 
-        return [&](){
+        return [&factorMatrix1, &factorMatrix2, &resultMatrix, startRow, startColumn, count, numberOfThreads](){
             KthTask(factorMatrix1, factorMatrix2, resultMatrix, startRow, startColumn, count, numberOfThreads).run();
         };
     }
