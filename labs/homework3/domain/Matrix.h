@@ -18,6 +18,7 @@ private:
 public:
     //region basics
     explicit Matrix(size_t mSize) : m_size(mSize), m_data(new int*[m_size]) {
+        cout << "Matrix constructor " << this << endl;
         auto random = Random(100);
         for (int i = 0; i < m_size; ++i) {
             m_data[i] = new int[m_size];
@@ -28,6 +29,7 @@ public:
     }
 
     Matrix(const Matrix& other) : m_size(other.m_size), m_data(new int*[m_size]) {
+        cout << "Matrix copy constructor " << this << endl;
         if (m_size != other.m_size)
             throw runtime_error("Size must be equal.");
 
@@ -42,6 +44,7 @@ public:
     Matrix& operator=(const Matrix& other) = delete;
 
     ~Matrix() {
+        cout << "Matrix destructor " << this << endl;
         for (int i = 0; i < m_size; ++i) {
             delete[] m_data[i];
         }
