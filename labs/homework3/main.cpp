@@ -22,10 +22,10 @@ pair<long, Matrix> runThreadsApproach(ThreadsApproachFactory& threadsApproachFac
 
 int main() {
     // --------------------- play with these values ---------------------
-    size_t iterations = 1000;
-    size_t matrixSize = 30;
+    size_t iterations = 10;
+    size_t matrixSize = 2000;
     int numberOfThreads = 10;
-    GenerationStrategy* generationStrategy = new RowStrategy(); // RowStrategy(), ColumnStrategy(), KthStrategy()
+    GenerationStrategy* generationStrategy = new ColumnStrategy(); // RowStrategy(), ColumnStrategy(), KthStrategy()
     auto threadsApproachFactory = ThreadPoolThreadsApproachFactory(); // ManualThreadsApproachFactory(), ThreadPoolThreadsApproachFactory()
     // 1000 iterations
     // 20x20 matrix, 20 threads, row, thread pool - ~65 μs
@@ -33,6 +33,10 @@ int main() {
     // 20x20 matrix, 10 threads, kth, thread pool - ~31 μs
     // 20x20 matrix, 10 threads, kth, manual - ~104 μs
     // 20x20 matrix, 1 threads, kth, manual - ~48 μs
+    // 20x20 matrix, 10 threads, row, pool - ~44 μs
+    // 20x20 matrix, 10 threads, row, manual - ~104 μs
+    // 20x20 matrix, 10 threads, column, manual - ~110 μs
+    // 20x20 matrix, 10 threads, column, pool - ~42 μs
 
     // ------------------------------------------------------------------
     long sum = 0;
