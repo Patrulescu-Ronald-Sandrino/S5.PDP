@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace homework4
 {
-    public static class Impl2
+    public static class Impl2 // tasks
     {
         public static void Run(string[] hosts)
         {

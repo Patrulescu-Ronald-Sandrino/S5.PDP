@@ -3,14 +3,14 @@ using System.Threading;
 
 namespace homework4
 {
-    public static class Impl1
+    public static class Impl1 // callbacks
     {
         public static void Run(string[] hosts)
         {
             for (var i = 0; i < hosts.Length; i++)
             {
                 StartClient(hosts[i], i);
-                Thread.Sleep(2000); // w/o it no connection is made (maybe too fast)
+                Thread.Sleep(2000); // w/o it no connection is made (maybe too fast. see for yourself)
             }
         }
 
