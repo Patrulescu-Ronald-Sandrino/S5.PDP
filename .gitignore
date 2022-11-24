@@ -2,3 +2,5 @@
 *.exe
 .idea/
 cmake-build-debug/
+bin/
+obj/
