@@ -50,6 +50,10 @@ public:
         return degree + 1;
     }
 
+    bool isCoefficientRank(int i) const {
+        return i >= 0 && i <= degree;
+    }
+
     int operator[](int index) const {
         return coefficients[index];
     }
@@ -71,8 +75,52 @@ public:
 
         return os;
     }
-private:
 
+    Polynomial low(int len) const {
+        return Polynomial(vector<int>(coefficients.begin(), coefficients.begin() + len));
+    }
+
+    Polynomial high(int len) const {
+        return Polynomial(vector<int>(coefficients.begin() + len, coefficients.end()));
+    }
+
+    Polynomial operator+(const Polynomial &rhs) const {
+        int newDegree = max(degree, rhs.degree);
+        Polynomial result(newDegree, false);
+
+        for (int i = 0; i <= newDegree; ++i) {
+            if (this->isCoefficientRank(i))
+                result[i] += this->coefficients[i];
+            if (rhs.isCoefficientRank(i))
+                result[i] += rhs.coefficients[i];
+        }
+
+        return result;
+    }
+
+    Polynomial operator-(const Polynomial &rhs) const {
+        int newDegree = max(degree, rhs.degree);
+        Polynomial result(newDegree, false);
+
+        for (int i = 0; i <= newDegree; ++i) {
+            if (this->isCoefficientRank(i))
+                result[i] += this->coefficients[i];
+            if (rhs.isCoefficientRank(i))
+                result[i] -= rhs.coefficients[i];
+        }
+
+        return result;
+    }
+
+    Polynomial operator<<(int shift) const {
+        vector<int> newCoefficients(degree + 1 + shift);
+
+        for (int i = 0; i <= degree; ++i) {
+            newCoefficients[i + shift] = (*this)[i];
+        }
+
+        return {degree + shift, newCoefficients};
+    }
 };
 
 
