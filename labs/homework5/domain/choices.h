@@ -5,12 +5,12 @@
 #ifndef HOMEWORK5_CHOICES_H
 #define HOMEWORK5_CHOICES_H
 
-enum class Algorithm {
+enum class AlgorithmType {
     REGULAR,
     KARATSUBA
 };
 
-enum class Method {
+enum class MethodType {
     SEQUENTIAL,
     PARALLEL,
 };
