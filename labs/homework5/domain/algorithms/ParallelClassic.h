@@ -17,6 +17,7 @@ public:
     Polynomial multiply(const Polynomial &p1, const Polynomial &p2) override {
         Polynomial result(p1.getDegree() + p2.getDegree(), false);
         int size = result.getNumberOfCoefficients();
+        // note that NUMBER_OF_THREADS doesn't fix the number of threads
         int step = max(size / NUMBER_OF_THREADS, 1); // avoid step = 0 by maxing w/ 1
         vector<thread> threads;
 
