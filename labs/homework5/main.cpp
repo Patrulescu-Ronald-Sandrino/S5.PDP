@@ -7,7 +7,6 @@
 using namespace std;
 
 
-*/
 int main() {
     srand(time(nullptr));
 
@@ -16,7 +15,7 @@ int main() {
     bool printPolynomials = false;
     AlgorithmType algorithm = AlgorithmType::REGULAR;
     MethodType method = MethodType::SEQUENTIAL;
-    int degree = 5111;
+    int degree = 20001;
     // zero: p1(degree, false), random: p1(degree, true), coefficients: p1({1, 2, 3, 4, 5, 6}), mapping: p1(degree, [](unsigned int i) { return i + 1; })
     Polynomial p1(Util::vectorFromIndexMapping(degree + 1, [](unsigned int i) { return (i + 1) % 10; }));
     Polynomial p2(Util::vectorFromIndexMapping(degree + 1, [](unsigned int i) { return (i + 1) % 10; }));

@@ -1,0 +1,5 @@
+degree=20001
+[Regular    Sequential   2498ms]
+[Regular    Parallel     1495ms]
+[Karatsuba  Sequential  11724ms]
+[Karatsuba  Parallel     1666ms]
