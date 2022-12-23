@@ -10,6 +10,8 @@ using namespace std;
 #include <vector>
 #include <string>
 #include <sstream>
+#include <functional>
+#include <chrono>
 
 
 vector<string> split(const string& s, char delimiter) {
@@ -28,6 +30,22 @@ vector<U> map(const vector<T>& elements, U (*mapper)(const T&)) {
     for (const string& e : elements) {
         result.push_back(mapper(e));
     }
+    return result;
+}
+
+bool contains(const vector<int>& elements, int element) {
+    for (int e : elements) {
+        if (e == element) return true;
+    }
+    return false;
+}
+
+template<typename T>
+vector<T> vectorFromIndexMapping(int size, const function<T(unsigned int)>& mapping) {
+    vector<T> result(size);
+    for (int i = 0; i < size; i++)
+        result[i] = mapping(i);
+
     return result;
 }
 

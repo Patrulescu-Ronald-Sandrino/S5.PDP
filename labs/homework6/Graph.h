@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <valarray>
 #include "util.h"
 
 using namespace std;
@@ -20,6 +21,23 @@ public:
         };
     public:
         Graph static create(const vector<int> &nodes, const vector<vector<int>> &edges) {
+            return {nodes, edges};
+        }
+
+        Graph static random(int n) {
+            vector<int> nodes = vectorFromIndexMapping<int>(n, [](unsigned int i) { return i; });
+            vector<vector<int>> edges = vectorFromIndexMapping<vector<int>>(n, [](unsigned int i) { return vector<int>();});
+
+            for (int i = 0; i < pow(n, 2) / 2; i++) {
+                int from = rand() % n;
+                int to = rand() % n;
+
+                if (from == to) continue;
+                if (contains(edges[from], to)) continue;
+
+                edges[from].push_back(to);
+            }
+
             return {nodes, edges};
         }
 
@@ -42,17 +60,13 @@ public:
 
             return {nodes, edges};
         }
-
-        Graph random(int n, int m) {
-            // TODO
-        }
     };
 
-    const vector<int> &getNodes() const {
+    [[nodiscard]] const vector<int> &getNodes() const {
         return nodes;
     }
 
-    string toString() const {
+    [[nodiscard]] string toString() const {
         string result = "Graph{\nnodes=[";
         for (int i = 0; i < nodes.size(); i++) {
             result += to_string(nodes[i]);
@@ -74,11 +88,34 @@ public:
         return result;
     }
 
+    vector<int> &getEdgesFrom(int node) {
+        if (not exists(node)) throw runtime_error("Node " + to_string(node) + " does not exist");
+
+        return edges[node];
+    }
+
+    [[nodiscard]] bool hasEdge(int from, int to) const {
+        if (not exists(from)) throw runtime_error("Node " + to_string(from) + " does not exist");
+        if (not exists(to)) throw runtime_error("Node " + to_string(to) + " does not exist");
+
+        return std::find(edges[from].begin(), edges[from].end(), to) != edges[from].end();
+    }
+
+    /** @return number of nodes in the graph */
+    [[nodiscard]] size_t size() const {
+        return nodes.size();
+    }
+
 protected:
     vector<int> nodes;
     vector<vector<int>> edges;
 
     Graph(const vector<int> &nodes, const vector<vector<int>> &edges) : nodes(nodes), edges(edges) {}
+
+
+    [[nodiscard]] bool exists(int node) const {
+        return std::find(nodes.begin(), nodes.end(), node) != nodes.end();
+    }
 };
 
 

@@ -11,7 +11,8 @@ class GraphProvider {
 public:
     static Graph withHamiltonianCycle;
     static Graph withoutHamiltonianPath;
-    static Graph random;
+    static Graph random(int n) { return Graph::Factory::random(n); }
+
 
     ~GraphProvider() = delete;
     Graph operator=(const GraphProvider&) = delete;
