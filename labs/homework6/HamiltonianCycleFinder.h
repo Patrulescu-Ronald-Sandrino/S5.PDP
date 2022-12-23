@@ -31,18 +31,19 @@ private:
         return found ? path : vector<int>();
     }
 
-    bool search(int node, vector<int> &path) const {
-        if (visitedAllNodes(path)) return graph.hasEdge(node, path[0]);
+    bool search(int currentNode, vector<int> &path) const {
+        if (visitedAllNodes(path)) return graph.hasEdge(currentNode, path[0]);
 
-        for (int i = 0; i < graph.size(); ++i) {
+        for (auto node: graph.getNodes()) {
+            ::printf("tid=%x, currentNode=%d, node=%d\n", this_thread::get_id(), currentNode, node);
 
-            if (graph.hasEdge(node, i) and not contains(path, i)) {
-                path.push_back(i);
-                std::remove(graph.getEdgesFrom(node).begin(), graph.getEdgesFrom(node).end(), i);
+            if (graph.hasEdge(currentNode, node) and not contains(path, node)) {
+                path.push_back(node);
+                std::remove(graph.getEdgesFrom(currentNode).begin(), graph.getEdgesFrom(currentNode).end(), node);
 
-                if (searchAsync(i, path).get()) return true;
+                if (searchAsync(node, path).get()) return true;
 
-                graph.getEdgesFrom(node).push_back(i);
+                graph.getEdgesFrom(currentNode).push_back(node);
                 path.pop_back();
             }
         }
