@@ -56,31 +56,37 @@ string infoToString(AlgorithmType algorithmType, MethodType methodType, auto dur
     ss << "  ";
     ss.width(10); ss << left << method;
     ss << "  ";
-    ss.width(3); ss << right << duration;
+    ss.width(5); ss << right << duration;
     ss << "ms]";
 
     return ss.str();
 }
 
-void runTimed(AlgorithmType algorithmType, MethodType methodType, const Polynomial& p1, const Polynomial& p2) {
+void runTimed(AlgorithmType algorithmType, MethodType methodType, const Polynomial &p1, const Polynomial &p2, bool printPolynomials) {
     long duration;
     auto result = run(algorithmType, methodType, p1, p2, duration);
 
     auto header = infoToString(algorithmType, methodType, duration);
-    printf("%s p1 * p2 = %s\n", header.c_str(), result.toString().c_str());
+    string resultString = result.toString();
+    resultString = printPolynomials ? " p1 * p2 = " + resultString : "";
+    printf("%s%s\n", header.c_str(), resultString.c_str());
 }
 
-void processInput(bool runOnce, AlgorithmType &algorithm, MethodType &method, const Polynomial &p1, const Polynomial &p2) {
-    cout << "p1 = " << p1 << endl;
-    cout << "p2 = " << p2 << endl;
+void processInput(bool runOnce, AlgorithmType &algorithm, MethodType &method, const Polynomial &p1, const Polynomial &p2, bool printPolynomials) {
+    printf("degree=%d\n", p1.getDegree());
+
+    if (printPolynomials) {
+        cout << "p1 = " << p1 << endl;
+        cout << "p2 = " << p2 << endl;
+    }
 
     if (runOnce) {
-        runTimed(algorithm, method, p1, p2);
+        runTimed(algorithm, method, p1, p2, printPolynomials);
     } else {
-        runTimed(AlgorithmType::REGULAR, MethodType::SEQUENTIAL, p1, p2);
-        runTimed(AlgorithmType::REGULAR, MethodType::PARALLEL, p1, p2);
-        runTimed(AlgorithmType::KARATSUBA, MethodType::SEQUENTIAL, p1, p2);
-        runTimed(AlgorithmType::KARATSUBA, MethodType::PARALLEL, p1, p2);
+        runTimed(AlgorithmType::REGULAR, MethodType::SEQUENTIAL, p1, p2, printPolynomials);
+        runTimed(AlgorithmType::REGULAR, MethodType::PARALLEL, p1, p2, printPolynomials);
+        runTimed(AlgorithmType::KARATSUBA, MethodType::SEQUENTIAL, p1, p2, printPolynomials);
+        runTimed(AlgorithmType::KARATSUBA, MethodType::PARALLEL, p1, p2, printPolynomials);
     }
 }
 
