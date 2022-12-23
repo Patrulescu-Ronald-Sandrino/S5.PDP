@@ -42,7 +42,18 @@ private:
     explicit HamiltonianCycleFinder(const Graph& graph) : graph(graph) {}
 
     [[nodiscard]] vector<int> hasHamiltonianCycle() const {
-        return {};
+        if (graph.getNodes().empty()) throw runtime_error("Graph is empty");
+
+        auto node = graph.getNodes()[0];
+        vector<int> path = {node};
+        auto found = search(node, path);
+
+        return found ? path : vector<int>();
+    }
+
+    bool search(int node, vector<int>& path) const {
+
+        return false;
     }
 };
 

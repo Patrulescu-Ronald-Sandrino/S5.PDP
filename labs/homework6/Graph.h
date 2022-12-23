@@ -48,6 +48,10 @@ public:
         }
     };
 
+    const vector<int> &getNodes() const {
+        return nodes;
+    }
+
     string toString() const {
         string result = "Graph{\nnodes=[";
         for (int i = 0; i < nodes.size(); i++) {
