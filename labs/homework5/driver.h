@@ -24,7 +24,7 @@ Algorithm* decideAlgorithm(AlgorithmType algorithm, MethodType method) {
     return algorithm == AlgorithmType::REGULAR ? new ParallelClassic() : (Algorithm*) new ParallelKaratsuba();
 }
 
-Polynomial run(AlgorithmType algorithmType, MethodType methodType, const Polynomial& p1, const Polynomial& p2) {
+Polynomial run(AlgorithmType algorithmType, MethodType methodType, const Polynomial& p1, const Polynomial& p2, long& duration) {
     if (p1.getDegree() != p2.getDegree()) {
         throw runtime_error("Degree of polynomials must be equal");
     }
@@ -34,8 +34,13 @@ Polynomial run(AlgorithmType algorithmType, MethodType methodType, const Polynom
     }
 
     return [&](Algorithm *algorithm) {
+        auto start = chrono::high_resolution_clock::now();
         Polynomial result = algorithm->multiply(p1, p2);
+        auto end = chrono::high_resolution_clock::now();
+
         delete algorithm;
+        duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
         return result;
     }(decideAlgorithm(algorithmType, methodType));
 }
@@ -58,12 +63,10 @@ string infoToString(AlgorithmType algorithmType, MethodType methodType, auto dur
 }
 
 void runTimed(AlgorithmType algorithmType, MethodType methodType, const Polynomial& p1, const Polynomial& p2) {
-    auto start = chrono::steady_clock::now();
-    auto result = run(algorithmType, methodType, p1, p2);
-    auto end = chrono::steady_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    long duration;
+    auto result = run(algorithmType, methodType, p1, p2, duration);
 
-    auto header = infoToString(algorithmType, methodType, chrono::duration_cast<chrono::milliseconds>(end - start).count());
+    auto header = infoToString(algorithmType, methodType, duration);
     printf("%s p1 * p2 = %s\n", header.c_str(), result.toString().c_str());
 }
 
