@@ -8,6 +8,7 @@
 #include <vector>
 #include <ostream>
 #include <iostream>
+#include <sstream>
 #include "../Util.h"
 
 using namespace std;
@@ -74,6 +75,12 @@ public:
         os << termToString(lastIndex);
 
         return os;
+    }
+
+    string toString() const {
+        stringstream ss;
+        ss << *this;
+        return ss.str();
     }
 
     Polynomial low(int len) const {
