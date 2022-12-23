@@ -70,7 +70,7 @@ public:
         return result;
     }
 
-private:
+protected:
     vector<int> nodes;
     vector<vector<int>> edges;
 
