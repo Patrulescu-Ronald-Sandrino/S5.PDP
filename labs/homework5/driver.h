@@ -10,7 +10,7 @@
 #include "domain/algorithms/SequentialClassic.h"
 #include "domain/choices.h"
 #include "domain/algorithms/Algorithm.h"
-#include "domain/Polynomial.h"
+#include "../homework7/model/Polynomial.h"
 #include "domain/algorithms/ParallelKaratsuba.h"
 #include <chrono>
 #include <iostream>

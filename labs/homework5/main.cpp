@@ -1,6 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include "domain/Polynomial.h"
+#include "../homework7/model/Polynomial.h"
 #include "domain/choices.h"
 #include "driver.h"
 

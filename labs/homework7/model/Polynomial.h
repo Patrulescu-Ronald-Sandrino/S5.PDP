@@ -9,7 +9,7 @@
 #include <ostream>
 #include <iostream>
 #include <sstream>
-#include "../Util.h"
+#include "../../homework7/Util.h"
 
 using namespace std;
 
@@ -32,13 +32,15 @@ public:
     }
 
     // if random is false, then the coefficients are initialized to 0
-    explicit Polynomial(int degree, bool random = true) : Polynomial(degree,
-                                                                     random ? Util::randomIntegers(degree + 1, 0, 10)
-                                                                            : Util::vectorFromIndexMapping(degree + 1)
+    explicit Polynomial(int size, bool random = true) : Polynomial(size - 1,
+                                                                     random ? Util::randomIntegers(size, 0, 10)
+                                                                            : Util::vectorFromIndexMapping(size)
     ) {}
 
     explicit Polynomial(const vector<int> &coefficients) : Polynomial(coefficients.size() - 1, coefficients) {}
 
+
+    /// degree = size - 1
     int getDegree() const {
         return degree;
     }
@@ -47,7 +49,8 @@ public:
         return coefficients;
     }
 
-    int getNumberOfCoefficients() const {
+    /// number of coefficients = degree + 1
+    int getSize() const {
         return degree + 1;
     }
 
@@ -93,7 +96,7 @@ public:
 
     Polynomial operator+(const Polynomial &rhs) const {
         int newDegree = max(degree, rhs.degree);
-        Polynomial result(newDegree, false);
+        Polynomial result(newDegree + 1, false);
 
         for (int i = 0; i <= newDegree; ++i) {
             if (this->isCoefficientRank(i))
@@ -107,7 +110,7 @@ public:
 
     Polynomial operator-(const Polynomial &rhs) const {
         int newDegree = max(degree, rhs.degree);
-        Polynomial result(newDegree, false);
+        Polynomial result(newDegree + 1, false);
 
         for (int i = 0; i <= newDegree; ++i) {
             if (this->isCoefficientRank(i))
@@ -126,7 +129,32 @@ public:
             newCoefficients[i + shift] = (*this)[i];
         }
 
-        return {degree + shift, newCoefficients};
+        return {degree + 1 + shift, newCoefficients};
+    }
+
+    /*
+        public static Polynomial multiplySequence(Polynomial p1, Polynomial p2, int start, int end) {
+            Polynomial result = new Polynomial(2 * p1.getDegree() + 1);
+
+            for (int i = start; i < end; i++) {
+                for (int j = 0; j < p2.getCoefficients().size(); j++) {
+                    result.getCoefficients().set(i + j, result.getCoefficients().get(i + j) + p1.getCoefficients().get(i) * p2.getCoefficients().get(j));
+                }
+            }
+
+            return result;
+        }
+    */
+    Polynomial multiplySequence(const Polynomial &p2, int start, int end) const {
+        Polynomial result(2 * degree + 1, false);
+
+        for (int i = start; i < end; i++) {
+            for (int j = 0; j < p2.coefficients.size(); j++) {
+                result.coefficients[i + j] += coefficients[i] * p2.coefficients[j];
+            }
+        }
+
+        return result;
     }
 };
 

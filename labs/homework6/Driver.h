@@ -23,10 +23,10 @@ public:
             cout << "No Hamiltonian cycle found" << endl;
         } else {
             cout << "Hamiltonian cycle found: ";
-            for (int i = 0; i < result.size(); i++) {
-                cout << result[i];
-                if (i != result.size() - 1) cout << " -> ";
-            }
+//            for (int i = 0; i < result.size(); i++) {
+//                cout << result[i];
+//                if (i != result.size() - 1) cout << " -> ";
+//            }
             cout << endl;
         }
     }

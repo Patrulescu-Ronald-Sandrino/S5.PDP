@@ -6,6 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 # Add MPI Package to Project
 find_package(MPI REQUIRED)
 
-add_executable(homework7 main.cpp)
+add_executable(homework7 main.cpp tasks.h model/Implementation.h)
 # Add libraries for code completion and compiling
 target_link_libraries(homework7 PUBLIC MPI::MPI_CXX)

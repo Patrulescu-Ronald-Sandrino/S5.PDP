@@ -35,7 +35,7 @@ private:
         if (visitedAllNodes(path)) return graph.hasEdge(currentNode, path[0]);
 
         for (auto node: graph.getNodes()) {
-            ::printf("tid=%x, currentNode=%d, node=%d\n", this_thread::get_id(), currentNode, node);
+//            ::printf("tid=%x, currentNode=%d, node=%d\n", this_thread::get_id(), currentNode, node);
 
             if (graph.hasEdge(currentNode, node) and not contains(path, node)) {
                 path.push_back(node);

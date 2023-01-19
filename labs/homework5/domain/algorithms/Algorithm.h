@@ -5,7 +5,7 @@
 #ifndef HOMEWORK5_ALGORITHM_H
 #define HOMEWORK5_ALGORITHM_H
 
-#include "../Polynomial.h"
+#include "../../../homework7/model/Polynomial.h"
 
 using namespace std;
 
