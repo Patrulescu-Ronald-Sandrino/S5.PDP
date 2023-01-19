@@ -6,8 +6,8 @@
 int main() {
     srand(time(nullptr));
 
-    bool runOnce = true;
-    int nodes = 1000;
+    bool runOnce = false;
+    int nodes = 25;
     Graph g = GraphProvider::random(nodes);
 
 
