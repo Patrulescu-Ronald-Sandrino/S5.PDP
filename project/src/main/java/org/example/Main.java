@@ -127,6 +127,7 @@ public class Main {
         while (iteration < nodeCount[0]) {
             for (currentNodeIndex = dataReceived[0]; currentNodeIndex <= dataReceived[1]; currentNodeIndex++) {
                 if (colorIndexes[currentNodeIndex] == -1) {
+                    // check if node is heaviest
                     boolean isNodeHeaviest = true;
                     for (int neighbours = 0; neighbours < nodeCount[0]; neighbours++) {
                         if (neighbours != currentNodeIndex) {
@@ -136,6 +137,7 @@ public class Main {
                             }
                         }
                     }
+
                     if (isNodeHeaviest) {
                         for (int alreadyAssignedColor = 0; alreadyAssignedColor < dataReceived[2]; alreadyAssignedColor++) {
                             boolean isColorAvailable = true;

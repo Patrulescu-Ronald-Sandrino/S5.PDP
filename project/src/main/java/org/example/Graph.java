@@ -184,7 +184,6 @@ public class Graph {
         for (Node node : neighbors.keySet()) {
             if(node.getColorIndex() != -1) {
                 org.graphstream.graph.Node n = graph.addNode(Integer.toString(node.getValue()));
-                // TODO: on line below - convert color to hex value string
                 n.setAttribute("ui.style", "fill-color:" + getColor(node.getColorIndex()) + "; text-size: 20px;");
                 n.setAttribute("ui.size", "3gu");
                 n.setAttribute("ui.label", Integer.toString(node.getValue()));
