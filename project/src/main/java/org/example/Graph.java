@@ -35,7 +35,7 @@ public class Graph {
         }
     }
 
-    private int getVerticesCount() {
+    public int getVerticesCount() {
         return neighbors.keySet().size();
     }
 
@@ -58,18 +58,18 @@ public class Graph {
         };
     }
 
-    public List<Map.Entry<Integer, Integer>> getColors() {
-        List<Map.Entry<Integer, Integer>> colors = new ArrayList<>();
+    public Map<Integer, Integer> getColors() {
+        Map<Integer, Integer>  colors = new HashMap<>();
         for (Node node : neighbors.keySet()) {
-            colors.add(new AbstractMap.SimpleImmutableEntry<>(node.getValue(), node.getColorIndex()));
+            colors.put(node.getValue(), node.getColorIndex());
         }
         return colors;
     }
 
-    public List<Integer> getWeights() {
-        List<Integer> weights = new ArrayList<>(getVerticesCount());
+    public Map<Integer, Integer> getWeights() {
+        Map<Integer, Integer> weights = new HashMap<>(getVerticesCount());
         for (Node node : neighbors.keySet())
-            weights.set(node.getValue(), node.getWeight());
+            weights.put(node.getValue(), node.getWeight());
         return weights;
     }
 
@@ -81,7 +81,14 @@ public class Graph {
         return maxColorIndex + 1;
     }
 
-    public void computeAndSetNodeColor(Node node) {
+    public void setColor(int nodeValue, int colorIndex) {
+        for(Node n : neighbors.keySet()) {
+            if(n.getValue() == nodeValue)
+                n.setColorIndex(colorIndex);
+        }
+    }
+
+    private void computeNodeColor(Node node) {
         Set<Node> neighborNodes = neighbors.get(node);
         Set<Integer> neighborColors = neighborNodes.stream().map(Node::getColorIndex).collect(Collectors.toSet());
         int maximumNeighborColor = Collections.max(neighborColors);
@@ -126,7 +133,7 @@ public class Graph {
             Set<Node> heavyNodes = computeHeavyNodes();
             for (Node node : heavyNodes) {
                 executorService.submit(() -> {
-                    computeAndSetNodeColor(node);
+                    computeNodeColor(node);
                 });
             }
             achromaticNodes.removeAll(heavyNodes);
@@ -161,16 +168,16 @@ public class Graph {
         });
     }
 
-    public int[][] toMatrix() {
-        int[][] matrix = new int[getVerticesCount()][getVerticesCount()];
+    public boolean[][] toBooleanMatrix() {
+        boolean[][] matrix = new boolean[getVerticesCount()][getVerticesCount()];
         for (int row = 0; row < getVerticesCount(); row++) {
             for (int column = 0; column < getVerticesCount(); column++) {
-                matrix[row][column] = 0;
+                matrix[row][column] = false;
             }
         }
         for (Node node : neighbors.keySet()) {
             for (Node neighbour : neighbors.get(node)) {
-                matrix[node.getValue()][neighbour.getValue()] = 1;
+                matrix[node.getValue()][neighbour.getValue()] = true;
             }
         }
         return matrix;
