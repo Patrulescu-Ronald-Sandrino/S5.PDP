@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import static org.example.Utils.printWithTID;
+
 
 public class Graph {
     private final List<Color> colors;
@@ -142,26 +144,26 @@ public class Graph {
     }
 
     public void showGraph() {
-        System.out.println("Colors: ");
+        printWithTID("Colors: ");
         neighbors.keySet().forEach(node -> {
-            System.out.println(node.getValue() + " has color " + node.getColorIndex());
+            printWithTID(node.getValue() + " has color " + node.getColorIndex());
         });
 
-        System.out.println(" ");
+        printWithTID(" ");
 
-        System.out.println("Neighbours: ");
+        printWithTID("Neighbours: ");
         neighbors.forEach((node, nodes) -> {
-            System.out.println(node.getValue() + " -> " + nodes.stream()
+            printWithTID(node.getValue() + " -> " + nodes.stream()
                     .map(Node::getValue)
                     .map(Objects::toString)
                     .reduce("", (a, b) -> a + " " + b));
         });
 
-        System.out.println(" ");
+        printWithTID(" ");
 
-        System.out.println("Neighbours (as colors): ");
+        printWithTID("Neighbours (as colors): ");
         neighbors.forEach((node, nodes) -> {
-            System.out.println(node.getColorIndex() + " -> " + nodes.stream()
+            printWithTID(node.getValue() + ": " + node.getColorIndex() + " -> " + nodes.stream()
                     .map(Node::getColorIndex)
                     .map(Objects::toString)
                     .reduce("", (a, b) -> a + " " + b));

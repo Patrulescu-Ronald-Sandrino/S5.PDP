@@ -13,4 +13,8 @@ public class Utils {
         }
         return array;
     }
+
+    public static void printWithTID(Object object) {
+        System.out.printf("[TID=%d] %s%n" ,Thread.currentThread().getId(), object);
+    }
 }

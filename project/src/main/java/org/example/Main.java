@@ -1,6 +1,9 @@
 package org.example;
 import mpi.MPI;
 
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+
 
 public class Main {
     /// change this values
@@ -12,10 +15,10 @@ public class Main {
 
         if (approachType == ApproachType.MPI)
             runMPI(args);
-        else
+        else {
             runRegular();
-
-        graph.showGraph();
+            graph.showGraph();
+        }
     }
 
     private static void runRegular() {
@@ -35,7 +38,6 @@ public class Main {
         }
 
         MPI.Finalize();
-
     }
 
     private static void master(int numberOfProcesses) {
@@ -46,7 +48,7 @@ public class Main {
         int[] colorIndexes = Utils.mapToIntArray(graph.getColors());
         int[] nodeCount = new int[]{graph.getVerticesCount()};
 
-        int nodesPerProcess = nodeCount[0] / (numberOfProcesses - 1);
+        int nodesPerProcess = nodeCount[0] / (numberOfProcesses < 2 ? 1 : numberOfProcesses - 1); // protected against 0/1 processors given
         int nodesForLastProcess = nodeCount[0] - nodesPerProcess * (numberOfProcesses - 2);
         int startingNodeIndex = 0, endingNodeIndex;
 
@@ -91,6 +93,8 @@ public class Main {
         for (int i = 0; i < nodeCount[0]; i++) {
             graph.setColor(i, colorIndexes[i]);
         }
+
+        System.out.println("Master process finished");
         int[] colors = Utils.mapToIntArray(graph.getColors());
         for (int i = 0; i < nodeCount[0]; i++) {
             System.out.println(colors[i]);
@@ -103,7 +107,7 @@ public class Main {
         int[] nodeCount = new int[]{0};
         MPI.COMM_WORLD.Recv(nodeCount, 0, 1, MPI.INT, 0, rank);
 
-        System.out.println(nodeCount[0]);
+//        System.out.println(nodeCount[0]);
 
         boolean[][] graphMatrix = new boolean[nodeCount[0]][nodeCount[0]];
         for (int index = 0; index < nodeCount[0]; index++) {
