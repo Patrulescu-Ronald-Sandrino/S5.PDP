@@ -1,8 +1,11 @@
 package org.example;
 
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.implementations.SingleGraph;
+
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -170,6 +173,38 @@ public class Graph {
         });
     }
 
+    void showGraphGUI() {
+        System.setProperty("org.graphstream.ui", "swing");
+        org.graphstream.graph.Graph graph = new SingleGraph("visual_graph");
+        graph.setAttribute("ui.stylesheet", "node {size: 30px;}");
+        graph.setAttribute("ui.antialias");
+        graph.setAttribute("ui.stylesheet", "node {size: 30px;}");
+        graph.setAttribute("ui.antialias");
+
+        for (Node node : neighbors.keySet()) {
+            if(node.getColorIndex() != -1) {
+                org.graphstream.graph.Node n = graph.addNode(Integer.toString(node.getValue()));
+                // TODO: on line below - convert color to hex value string
+                n.setAttribute("ui.style", "fill-color:" + getColor(node.getColorIndex()) + "; text-size: 20px;");
+                n.setAttribute("ui.size", "3gu");
+                n.setAttribute("ui.label", Integer.toString(node.getValue()));
+                n.setAttribute("ui.class", "big");
+            }
+        }
+
+        for (Node node : neighbors.keySet()) {
+            for (Node node2 : neighbors.get(node)) {
+                if (node2.getValue() < node.getValue()) continue;
+                if (graph.getNode(Integer.toString(node.getValue())) != null && graph.getNode(Integer.toString(node2.getValue())) != null) {
+//                    graph.addEdge(node.getValue() + Integer.toString(node2.getValue()), Integer.toString(node.getValue()), Integer.toString(node2.getValue()));
+                    Edge e = graph.addEdge(Integer.toString(node.getValue()) + node2.getValue(), Integer.toString(node.getValue()), Integer.toString(node2.getValue()));
+                    e.setAttribute("ui.style", "size: 3px;");
+                }
+            }
+        }
+        graph.display();
+    }
+
     public boolean[][] toBooleanMatrix() {
         boolean[][] matrix = new boolean[getVerticesCount()][getVerticesCount()];
         for (int row = 0; row < getVerticesCount(); row++) {
@@ -183,5 +218,13 @@ public class Graph {
             }
         }
         return matrix;
+    }
+
+    private String getColor(int index) {
+        return colorToHex(colors.get(index % colors.size()));
+    }
+
+    private static String colorToHex(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 }

@@ -1,8 +1,6 @@
 package org.example;
-import mpi.MPI;
 
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import mpi.MPI;
 
 
 public class Main {
@@ -101,6 +99,7 @@ public class Main {
         }
 
         graph.showGraph();
+        graph.showGraphGUI();
     }
 
     private static void worker(int rank, int numberOfProcesses) {
