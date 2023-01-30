@@ -1,0 +1,8 @@
+//
+// Created by kamui on 13.01.2023.
+//
+
+#ifndef HOMEWORK7_IMPLEMENTATION1_H
+#define HOMEWORK7_IMPLEMENTATION1_H
+
+#endif //HOMEWORK7_IMPLEMENTATION1_H
