@@ -182,13 +182,11 @@ public class Graph {
         graph.setAttribute("ui.antialias");
 
         for (Node node : neighbors.keySet()) {
-            if(node.getColorIndex() != -1) {
-                org.graphstream.graph.Node n = graph.addNode(Integer.toString(node.getValue()));
-                n.setAttribute("ui.style", "fill-color:" + getColor(node.getColorIndex()) + "; text-size: 20px;");
-                n.setAttribute("ui.size", "3gu");
-                n.setAttribute("ui.label", Integer.toString(node.getValue()));
-                n.setAttribute("ui.class", "big");
-            }
+            org.graphstream.graph.Node n = graph.addNode(Integer.toString(node.getValue()));
+            n.setAttribute("ui.style", "fill-color:" + (node.getColorIndex() != -1 ? getColor(node.getColorIndex() + 1) : "#f0f0f0") + "; text-size: 20px;");
+            n.setAttribute("ui.size", "3gu");
+            n.setAttribute("ui.label", Integer.toString(node.getValue()));
+            n.setAttribute("ui.class", "big");
         }
 
         for (Node node : neighbors.keySet()) {
@@ -204,16 +202,16 @@ public class Graph {
         graph.display();
     }
 
-    public boolean[][] toBooleanMatrix() {
-        boolean[][] matrix = new boolean[getVerticesCount()][getVerticesCount()];
+    public int[][] toMatrix() {
+        int[][] matrix = new int[getVerticesCount()][getVerticesCount()];
         for (int row = 0; row < getVerticesCount(); row++) {
             for (int column = 0; column < getVerticesCount(); column++) {
-                matrix[row][column] = false;
+                matrix[row][column] = 0;
             }
         }
         for (Node node : neighbors.keySet()) {
             for (Node neighbour : neighbors.get(node)) {
-                matrix[node.getValue()][neighbour.getValue()] = true;
+                matrix[node.getValue()][neighbour.getValue()] = 1;
             }
         }
         return matrix;
